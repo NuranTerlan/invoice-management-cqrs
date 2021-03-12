@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using InvoiceManagementApplication.Application.Common.Interfaces;
 using InvoiceManagementApplication.Application.Invoices.DTOs;
 using InvoiceManagementApplication.Application.Invoices.Queries;
@@ -13,10 +14,12 @@ namespace InvoiceManagementApplication.Application.Invoices.Handlers
     public class GetUserInvoicesQueryHandler : IRequestHandler<GetUserInvoicesQuery, IList<InvoiceDto>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public GetUserInvoicesQueryHandler(IApplicationDbContext context)
+        public GetUserInvoicesQueryHandler(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IList<InvoiceDto>> Handle(GetUserInvoicesQuery request, CancellationToken cancellationToken)
@@ -27,30 +30,7 @@ namespace InvoiceManagementApplication.Application.Invoices.Handlers
 
             if (invoices != null)
             {
-                result = invoices.Select(i => new InvoiceDto
-                {
-                    AmountPaid = i.AmountPaid,
-                    CreationTime = i.CreationTime,
-                    Date = i.Date,
-                    Discount = i.Discount,
-                    DiscountType = i.DiscountType,
-                    Tax = i.Tax,
-                    TaxType = i.TaxType,
-                    DueDate = i.DueDate,
-                    From = i.From,
-                    To = i.To,
-                    Id = i.Id,
-                    InvoiceNumber = i.InvoiceNumber,
-                    Logo = i.Logo,
-                    PaymentTerms = i.PaymentTerms,
-                    InvoiceItems = i.InvoiceItems.Select(item => new InvoiceItemDto
-                    {
-                        Id = item.Id,
-                        Item = item.Item,
-                        Quantity = item.Quantity,
-                        Rate = item.Rate
-                    }).ToList()
-                }).ToList();
+                result = _mapper.Map<List<InvoiceDto>>(invoices);
             }
 
             return result;
