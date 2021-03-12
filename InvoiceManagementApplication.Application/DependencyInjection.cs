@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using AutoMapper;
 using FluentValidation;
 using InvoiceManagementApplication.Application.Common.Behaviors;
 using InvoiceManagementApplication.Application.Invoices.Commands;
@@ -15,6 +16,7 @@ namespace InvoiceManagementApplication.Application
             services.AddTransient(typeof(IPipelineBehavior<,>),
                 typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             return services;
         }
